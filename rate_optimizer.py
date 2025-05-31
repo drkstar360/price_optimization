@@ -240,9 +240,6 @@ def main():
     constraints = get_constraints()
 
     print("Starting optimization (this may take a while)...")
-    # Options: SLSQP is good for many constraints. trust-constr is also powerful.
-    # Using a smaller number of max iterations for quicker demonstration.
-    # For production, increase 'maxiter'.
     options = {'maxiter': 2000, 'disp': True, 'ftol': 1e-8} # ftol for SLSQP
 
     result = minimize(objective_function, 
@@ -273,7 +270,7 @@ def main():
     for i, rate in enumerate(optimized_base_rates):
         print(f"Day {i+1:2d}: {rate:8.2f}")
     # Save base rates to CSV with Day column
-    pd.DataFrame({'Day': np.arange(1, N_DAYS+1), 'BaseRate': optimized_base_rates}).to_csv('optimized_base_rates.csv', index=False)
+    pd.DataFrame({'nights': np.arange(1, N_DAYS+1), 'BaseRate': optimized_base_rates}).to_csv('optimized_base_rates.csv', index=False)
 
     print("\n--- Optimized Nightly Discount Percentages (for cutoffs: " + ", ".join(map(str, CUTOFFS)) + " nights) ---")
     for i in range(N_DAYS):
@@ -282,7 +279,7 @@ def main():
     # Save discounts to CSV with Day column
     discount_cols = [f'cutoff_{c}' for c in CUTOFFS]
     discounts_df = pd.DataFrame(optimized_discounts, columns=discount_cols)
-    discounts_df.insert(0, 'Day', np.arange(1, N_DAYS+1))
+    discounts_df.insert(0, 'nights', np.arange(1, N_DAYS+1))
     discounts_df.to_csv('optimized_discounts.csv', index=False)
 
     print(f"\nFinal Sum of Squared Errors (SSE): {final_sse:.4f}")
